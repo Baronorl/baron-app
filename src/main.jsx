@@ -266,7 +266,22 @@ function Checkout({t,go}) {
       <div className="line total"><span>Total</span><strong>$1,350</strong></div>
       <div className="deposit"><span>Deposit due today</span><strong>$405</strong></div>
       <label className="agree"><input type="checkbox" defaultChecked/> I agree to the demo booking terms.</label>
-      <button className="gold-btn full" onClick={()=>go("confirmed")}>Confirm Booking</button>
+      <button className="gold-btn full" onClick={()=>{
+  const booking={
+    id:Date.now(),
+    provider:"Cocktail Culture Orlando",
+    event:"Maria & David's Wedding",
+    date:"Oct 17, 2026",
+    location:"Orlando, FL",
+    price:"$1,350",
+    status:"Confirmed"
+  };
+
+  const saved=JSON.parse(localStorage.getItem("baron_bookings") || "[]");
+  localStorage.setItem("baron_bookings",JSON.stringify([...saved,booking]));
+
+  go("confirmed");
+}}>Confirm Booking</button>
     </div>
   </section>
 }
@@ -320,24 +335,55 @@ useEffect(()=>{
 }
 
 function Bookings({go}) {
-  return <section className="page">
-    <div className="page-title"><span className="eyebrow">Bookings</span><h1>Your events</h1></div>
-    <div className="tabs"><button className="active">Upcoming</button><button>Completed</button><button>Cancelled</button></div>
-    <div className="booking-card">
-      <div className="booking-date"><strong>17</strong><span>OCT</span></div>
-      <div className="booking-main">
-        <span className="status">Confirmed</span>
-        <h3>Maria & David's Wedding</h3>
-        <p>Cocktail Culture Orlando · Orlando, FL</p>
-      </div>
-      <div className="booking-price">
-        <strong>$1,350</strong>
-        <button className="ghost-btn" onClick={()=>go("bookingdetail")}>View Details</button>
-      </div>
-    </div>
-  </section>
-}
+  const bookings=JSON.parse(localStorage.getItem("baron_bookings") || "[]");
 
+  return (
+    <section className="page">
+      <div className="page-title">
+        <span className="eyebrow">Bookings</span>
+        <h1>Your events</h1>
+      </div>
+
+      <div className="tabs">
+        <button className="active">Upcoming</button>
+        <button>Completed</button>
+        <button>Cancelled</button>
+      </div>
+
+      {bookings.length===0 ? (
+        <div className="content-card">
+          <h3>No bookings yet</h3>
+          <p>Your confirmed bookings will appear here.</p>
+        </div>
+      ) : (
+        bookings.map((booking)=>(
+          <div className="booking-card" key={booking.id}>
+            <div className="booking-date">
+              <strong>17</strong>
+              <span>OCT</span>
+            </div>
+
+            <div className="booking-main">
+              <span className="status">{booking.status}</span>
+              <h3>{booking.event}</h3>
+              <p>{booking.provider} · {booking.location}</p>
+            </div>
+
+            <div className="booking-price">
+              <strong>{booking.price}</strong>
+              <button
+                className="ghost-btn"
+                onClick={()=>go("bookingdetail")}
+              >
+                View Details
+              </button>
+            </div>
+          </div>
+        ))
+      )}
+    </section>
+  );
+}
 function BookingDetail({go}) {
   return <section className="page narrow">
     <button className="text-btn" onClick={()=>go("bookings")}>← Back to Bookings</button>

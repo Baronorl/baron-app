@@ -501,7 +501,6 @@ function BookingDetail({go}) {
         <button className="ghost-btn" onClick={()=>go("messages")}>
           <MessageCircle size={18}/> Message Provider
  </button>
-
 <button
 className="danger-btn"
             onClick={()=>{
@@ -517,7 +516,24 @@ className="danger-btn"
     go("bookings");
   }}
 >
+
   Cancel Booking
+</button><button
+  className="gold-btn"
+  onClick={()=>{
+    const bookings=JSON.parse(localStorage.getItem("baron_bookings") || "[]");
+
+    const updated=bookings.map(b=>
+      b.id===booking.id
+        ? {...b,status:"Completed"}
+        : b
+    );
+
+    localStorage.setItem("baron_bookings",JSON.stringify(updated));
+    go("bookings");
+  }}
+>
+  Complete Booking
 </button>
       </div>
     </section>

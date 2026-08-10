@@ -279,13 +279,19 @@ function Messages() {
   const chats=["Cocktail Culture Orlando","Pour Decisions Mobile Bar","BarOn Support"];
   const [active,setActive]=useState(chats[0]);
 const [draft,setDraft]=useState("");
-const [sentMessages,setSentMessages]=useState(()=>{
-  const saved=localStorage.getItem("baron_messages");
-  return saved ? JSON.parse(saved) : [];
+const [messagesByChat,setMessagesByChat]=useState(()=>{
+  const saved=localStorage.getItem("baron_messages_by_chat");
+  return saved ? JSON.parse(saved) : {};
 });
+
+const sentMessages=messagesByChat[active] || [];
+
 useEffect(()=>{
-  localStorage.setItem("baron_messages",JSON.stringify(sentMessages));
-},[sentMessages]);
+  localStorage.setItem(
+    "baron_messages_by_chat",
+    JSON.stringify(messagesByChat)
+  );
+},[messagesByChat]);
   return <section className="page">
     <div className="page-title"><span className="eyebrow">Messages</span><h1>Conversations</h1></div>
     <div className="messages-layout">
@@ -300,7 +306,10 @@ useEffect(()=>{
 />
 <button onClick={()=>{
   if(draft.trim()){
-    setSentMessages([...sentMessages,draft.trim()]);
+    setMessagesByChat({
+  ...messagesByChat,
+  [active]: [...sentMessages,draft.trim()]
+});
     setDraft("");
   }
 }}>

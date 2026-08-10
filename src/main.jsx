@@ -336,7 +336,14 @@ useEffect(()=>{
 
 function Bookings({go}) {
   const bookings=JSON.parse(localStorage.getItem("baron_bookings") || "[]");
+const [tab,setTab]=useState("Upcoming");
 
+const filteredBookings=bookings.filter(b=>{
+  if(tab==="Upcoming") return b.status==="Confirmed";
+  if(tab==="Completed") return b.status==="Completed";
+  if(tab==="Cancelled") return b.status==="Cancelled";
+  return true;
+});
   return (
     <section className="page">
       <div className="page-title">
@@ -345,18 +352,35 @@ function Bookings({go}) {
       </div>
 
       <div className="tabs">
-        <button className="active">Upcoming</button>
-        <button>Completed</button>
-        <button>Cancelled</button>
+        <button
+  className={tab==="Upcoming" ? "active" : ""}
+  onClick={()=>setTab("Upcoming")}
+>
+  Upcoming
+</button>
+
+<button
+  className={tab==="Completed" ? "active" : ""}
+  onClick={()=>setTab("Completed")}
+>
+  Completed
+</button>
+
+<button
+  className={tab==="Cancelled" ? "active" : ""}
+  onClick={()=>setTab("Cancelled")}
+>
+  Cancelled
+</button>
       </div>
 
-      {bookings.length===0 ? (
+      {filteredBookings.length===0 ? (
         <div className="content-card">
           <h3>No bookings yet</h3>
           <p>Your confirmed bookings will appear here.</p>
         </div>
       ) : (
-        bookings.map((booking)=>(
+        filteredBookings.map((booking)=>(
           <div className="booking-card" key={booking.id}>
             <div className="booking-date">
               <strong>17</strong>

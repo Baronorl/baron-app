@@ -31,3 +31,12 @@ BarOn Pro → Lead Detail → Send Quote
 React + Vite + CSS + lucide-react
 
 This is a front-end prototype. Payments, authentication, maps and database are mocked and can be added later with Supabase/Stripe.
+
+
+## BarOn V2 update
+
+- Fixed the non-functional **View Details** button in Bookings.
+- Added a complete **Booking Details** screen.
+- Booking detail now shows confirmation number, event details, provider, services, pricing and demo deposit.
+- Added functional **Message Provider** navigation.
+- Added a safe placeholder for the future cancellation flow.

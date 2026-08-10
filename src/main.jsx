@@ -90,7 +90,7 @@ function App(){
       {page==="post" && <PostEvent t={t} go={go}/>}
       {page==="quotes" && <Quotes t={t} go={go}/>}
       {page==="messages" && <Messages t={t}/>}
-      {page==="bookings" && <Bookings t={t}/>}
+      {page==="bookings" && <Bookings t={t} go={go}/>}\n      {page==="bookingdetail" && <BookingDetail t={t} go={go}/>}
       {page==="pro" && <ProDashboard t={t} go={go}/>}
       {page==="lead" && <LeadDetail t={t} go={go}/>}
       {page==="sendquote" && <SendQuote t={t} go={go}/>}
@@ -287,11 +287,88 @@ function Messages() {
   </section>
 }
 
-function Bookings() {
+function Bookings({go}) {
   return <section className="page">
     <div className="page-title"><span className="eyebrow">Bookings</span><h1>Your events</h1></div>
     <div className="tabs"><button className="active">Upcoming</button><button>Completed</button><button>Cancelled</button></div>
-    <div className="booking-card"><div className="booking-date"><strong>17</strong><span>OCT</span></div><div className="booking-main"><span className="status">Confirmed</span><h3>Maria & David's Wedding</h3><p>Cocktail Culture Orlando · Orlando, FL</p></div><div className="booking-price"><strong>$1,350</strong><button className="ghost-btn">View Details</button></div></div>
+    <div className="booking-card">
+      <div className="booking-date"><strong>17</strong><span>OCT</span></div>
+      <div className="booking-main">
+        <span className="status">Confirmed</span>
+        <h3>Maria & David's Wedding</h3>
+        <p>Cocktail Culture Orlando · Orlando, FL</p>
+      </div>
+      <div className="booking-price">
+        <strong>$1,350</strong>
+        <button className="ghost-btn" onClick={()=>go("bookingdetail")}>View Details</button>
+      </div>
+    </div>
+  </section>
+}
+
+function BookingDetail({go}) {
+  return <section className="page narrow">
+    <button className="text-btn" onClick={()=>go("bookings")}>← Back to Bookings</button>
+
+    <div className="page-title booking-detail-title">
+      <span className="eyebrow">Confirmed Booking</span>
+      <h1>Maria & David’s Wedding</h1>
+      <p>Cocktail Culture Orlando · October 17, 2026 · Orlando, FL</p>
+    </div>
+
+    <div className="booking-detail-status">
+      <div className="success-icon small"><Check/></div>
+      <div>
+        <strong>Your bar is ON.</strong>
+        <span>Confirmation #BARON-1026-417</span>
+      </div>
+      <span className="status">Confirmed</span>
+    </div>
+
+    <div className="content-card">
+      <h2>Event details</h2>
+      <div className="detail-grid booking-info-grid">
+        <div><small>Date</small><strong>Oct 17, 2026</strong></div>
+        <div><small>Start time</small><strong>5:00 PM</strong></div>
+        <div><small>Guests</small><strong>150</strong></div>
+        <div><small>Service</small><strong>5 hours</strong></div>
+        <div><small>Location</small><strong>Orlando, FL</strong></div>
+        <div><small>Venue</small><strong>Outdoor</strong></div>
+      </div>
+    </div>
+
+    <div className="content-card">
+      <div className="booking-provider">
+        <div className="avatar big">🍸</div>
+        <div>
+          <span className="eyebrow">Your BarOn Pro</span>
+          <h2>Cocktail Culture Orlando</h2>
+          <div className="rating"><Star size={15} fill="currentColor"/>4.9 · <ShieldCheck size={15}/> Verified</div>
+        </div>
+      </div>
+      <div className="tags">
+        <span>Signature Bar</span>
+        <span>2 Bartenders</span>
+        <span>Mixers</span>
+        <span>Signature Cocktails</span>
+      </div>
+      <button className="ghost-btn full booking-message" onClick={()=>go("messages")}><MessageCircle size={18}/> Message Provider</button>
+    </div>
+
+    <div className="content-card">
+      <h2>Payment summary</h2>
+      <div className="line"><span>Package</span><strong>$1,200</strong></div>
+      <div className="line"><span>Travel</span><strong>$50</strong></div>
+      <div className="line"><span>Estimated service fee</span><strong>$100</strong></div>
+      <div className="line total"><span>Total</span><strong>$1,350</strong></div>
+      <div className="deposit"><span>Demo deposit</span><strong>$405</strong></div>
+      <p className="demo-note">Demo MVP only — no real payment has been processed.</p>
+    </div>
+
+    <div className="booking-detail-actions">
+      <button className="ghost-btn" onClick={()=>go("messages")}><MessageCircle size={18}/> Message Provider</button>
+      <button className="danger-btn" onClick={()=>alert("Cancellation flow will be connected in the next MVP phase.")}>Cancel Booking</button>
+    </div>
   </section>
 }
 

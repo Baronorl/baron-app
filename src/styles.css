@@ -40,3 +40,36 @@ footer{border-top:1px solid var(--line);padding:32px 5vw;display:flex;justify-co
   .search-card{grid-template-columns:1fr}.search-card .gold-btn{grid-column:auto}.provider-grid,.quote-grid,.steps{grid-template-columns:1fr}.provider-image{height:180px}section{padding:54px 0}.section-head h2,.pro-cta h2{font-size:30px}.section-head{align-items:flex-start}.pro-cta{padding:28px;flex-direction:column;align-items:flex-start}.pro-cta button{width:100%}footer{flex-direction:column;gap:10px}
   .profile-card{padding:24px}.profile-card h1{font-size:30px}.sticky-actions{flex-direction:column}.form-grid,.choice-grid{grid-template-columns:1fr}.quote-actions{flex-direction:column}.messages-layout{grid-template-columns:1fr}.conversation-list{border-right:none}.conversation-list button:not(.active){display:none}.chat{min-height:500px}.booking-card,.lead-card{align-items:flex-start;flex-wrap:wrap}.booking-price,.lead-budget{width:100%;text-align:left}.stats{grid-template-columns:1fr 1fr}.stat-card strong{font-size:25px}.detail-grid{grid-template-columns:1fr 1fr}.pro-head{align-items:flex-start;flex-direction:column;gap:16px}.pro-head h1{font-size:42px}
 }
+
+
+/* BarOn V2 — booking details */
+.booking-detail-title h1{max-width:760px}
+.booking-detail-status{
+  display:flex;align-items:center;gap:16px;
+  background:linear-gradient(135deg,#171b18,#16161a);
+  border:1px solid #29422f;border-radius:18px;padding:18px 20px;margin-bottom:20px
+}
+.booking-detail-status .success-icon.small{width:46px;height:46px;margin:0;flex:0 0 auto}
+.booking-detail-status>div:nth-child(2){display:flex;flex-direction:column;gap:4px;flex:1}
+.booking-detail-status strong{font-size:19px}
+.booking-detail-status span:not(.status){color:#929c96;font-size:13px}
+.booking-info-grid{grid-template-columns:repeat(3,1fr)}
+.booking-provider{display:flex;gap:15px;align-items:center;margin-bottom:18px}
+.avatar.big{width:62px;height:62px;font-size:30px;border-radius:18px}
+.booking-provider h2{margin:5px 0 7px}
+.booking-message{margin-top:18px}
+.demo-note{color:#8f8f99!important;font-size:12px;margin:12px 0 0!important}
+.booking-detail-actions{display:flex;gap:10px;justify-content:flex-end;margin-bottom:35px}
+.danger-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:rgba(193,67,67,.08);border:1px solid rgba(193,67,67,.35);
+  color:#ff9b9b;border-radius:12px;padding:11px 15px;font-weight:700
+}
+.danger-btn:hover{background:rgba(193,67,67,.14)}
+@media(max-width:700px){
+  .booking-info-grid{grid-template-columns:1fr 1fr}
+  .booking-detail-status{align-items:flex-start;flex-wrap:wrap}
+  .booking-detail-status .status{margin-left:62px}
+  .booking-detail-actions{flex-direction:column}
+  .booking-detail-actions button{width:100%}
+}

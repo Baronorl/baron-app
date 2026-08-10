@@ -58,6 +58,7 @@ function App(){
   const [lang,setLang]=useState(localStorage.getItem("baron-lang")||"en");
   const [page,setPage]=useState("home");
   const [selected,setSelected]=useState(providers[0]);
+  const [selectedQuote,setSelectedQuote]=useState(null);
   const [mobile,setMobile]=useState(false);
   const t=i18n[lang];
   const go=(p)=>{setPage(p); window.scrollTo({top:0,behavior:"smooth"});}
@@ -88,13 +89,25 @@ function App(){
       {page==="find" && <Find t={t} go={go} setSelected={setSelected}/>}
       {page==="profile" && <Provider t={t} p={selected} go={go}/>}
       {page==="post" && <PostEvent t={t} go={go}/>}
-      {page==="quotes" && <Quotes t={t} go={go}/>}
+      {page==="quotes" && (
+  <Quotes
+    t={t}
+    go={go}
+    setSelectedQuote={setSelectedQuote}
+  />
+)}
       {page==="messages" && <Messages t={t}/>}
       {page==="bookings" && <Bookings t={t} go={go}/>}\n      {page==="bookingdetail" && <BookingDetail t={t} go={go}/>}
       {page==="pro" && <ProDashboard t={t} go={go}/>}
       {page==="lead" && <LeadDetail t={t} go={go}/>}
       {page==="sendquote" && <SendQuote t={t} go={go}/>}
-      {page==="checkout" && <Checkout t={t} go={go}/>}
+      {page==="checkout" && (
+  <Checkout
+    t={t}
+    go={go}
+    selectedQuote={selectedQuote}
+  />
+)}
       {page==="confirmed" && <Confirmed t={t} go={go}/>}
     </main>
     <footer>
@@ -240,7 +253,7 @@ function ChoiceGrid({items}) {
 }
 function Input({label,value}) { return <label className="input"><span>{label}</span><input defaultValue={value}/></label> }
 
-function Quotes({t,go}) {
+function Quotes({t,go,setSelectedQuote}) {
   return <section className="page">
     <div className="page-title"><span className="eyebrow">{t.quotes}</span><h1>Maria & David’s Wedding</h1><p>October 17 · Orlando, FL · 150 guests</p></div>
     <div className="quote-grid">
@@ -249,31 +262,41 @@ function Quotes({t,go}) {
         <div className="quote-price">${[1350,1480,1600][i]}<small>estimated total</small></div>
         <div className="tags"><span>Mobile Bar</span><span>2 Bartenders</span><span>Mixers</span><span>5 Hours</span></div>
         <p>We'd love to create a custom cocktail experience for your wedding.</p>
-        <div className="quote-actions"><button className="ghost-btn"><MessageCircle size={17}/> Message</button><button className="gold-btn" onClick={()=>go("checkout")}>Accept Quote</button></div>
+        <div className="quote-actions"><button className="ghost-btn"><MessageCircle size={17}/> Message</button><button className="gold-btn" onClick={()=>{
+  setSelectedQuote({
+    provider:p.name,
+    price:[1350,1480,1600][i]
+  });
+  go("checkout");
+}}>Accept Quote</button></div>
       </div>)}
     </div>
   </section>
 }
 
-function Checkout({t,go}) {
+function Checkout({t,go,selectedQuote}) {
+const packagePrice = selectedQuote?.price || 1200;
+const providerName = selectedQuote?.provider || "Cocktail Culture Orlando";
+const total = packagePrice + 50 + 100;
+const deposit = total * 0.30;
   return <section className="page narrow">
     <div className="page-title"><span className="eyebrow">Checkout</span><h1>Confirm your BarOn booking</h1></div>
     <div className="checkout-card">
-      <div><h3>Cocktail Culture Orlando</h3><p>Signature Bar · Wedding · Oct 17, 2026</p></div>
-      <div className="line"><span>Package</span><strong>$1,200</strong></div>
+      <div><h3>{providerName}</h3><p>Signature Bar · Wedding · Oct 17, 2026</p></div>
+      <div className="line"><span>Package</span><strong>${packagePrice.toLocaleString()}</strong></div>
       <div className="line"><span>Travel</span><strong>$50</strong></div>
       <div className="line"><span>Estimated service fee</span><strong>$100</strong></div>
-      <div className="line total"><span>Total</span><strong>$1,350</strong></div>
-      <div className="deposit"><span>Deposit due today</span><strong>$405</strong></div>
+      <div className="line total"><span>Total</span><strong>${total.toLocaleString()}</strong></div>
+      <div className="deposit"><span>Deposit due today</span><strong>${deposit.toLocaleString()}</strong></div>
       <label className="agree"><input type="checkbox" defaultChecked/> I agree to the demo booking terms.</label>
       <button className="gold-btn full" onClick={()=>{
   const booking={
     id:Date.now(),
-    provider:"Cocktail Culture Orlando",
+    provider: providerName,
     event:"Maria & David's Wedding",
     date:"Oct 17, 2026",
     location:"Orlando, FL",
-    price:"$1,350",
+    price: `$${total.toLocaleString()}`,
     status:"Confirmed"
   };
 

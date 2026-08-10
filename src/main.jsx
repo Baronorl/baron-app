@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState, useEffect} from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   Search, MapPin, CalendarDays, Users, Star, ShieldCheck, Heart, MessageCircle,
@@ -279,7 +279,13 @@ function Messages() {
   const chats=["Cocktail Culture Orlando","Pour Decisions Mobile Bar","BarOn Support"];
   const [active,setActive]=useState(chats[0]);
 const [draft,setDraft]=useState("");
-const [sentMessages,setSentMessages]=useState([]);
+const [sentMessages,setSentMessages]=useState(()=>{
+  const saved=localStorage.getItem("baron_messages");
+  return saved ? JSON.parse(saved) : [];
+});
+useEffect(()=>{
+  localStorage.setItem("baron_messages",JSON.stringify(sentMessages));
+},[sentMessages]);
   return <section className="page">
     <div className="page-title"><span className="eyebrow">Messages</span><h1>Conversations</h1></div>
     <div className="messages-layout">

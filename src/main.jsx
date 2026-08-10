@@ -278,11 +278,28 @@ function Confirmed({go}) {
 function Messages() {
   const chats=["Cocktail Culture Orlando","Pour Decisions Mobile Bar","BarOn Support"];
   const [active,setActive]=useState(chats[0]);
+const [draft,setDraft]=useState("");
+const [sentMessages,setSentMessages]=useState([]);
   return <section className="page">
     <div className="page-title"><span className="eyebrow">Messages</span><h1>Conversations</h1></div>
     <div className="messages-layout">
       <div className="conversation-list">{chats.map((c,i)=><button className={active===c?"active":""} onClick={()=>setActive(c)} key={c}><div className="avatar">{["🍸","🥂","⚡"][i]}</div><div><strong>{c}</strong><span>{i===0?"Your quote is ready.":"Thanks for reaching out..."}</span></div></button>)}</div>
-      <div className="chat"><div className="chat-head"><strong>{active}</strong><span>Usually replies within 1 hour</span></div><div className="chat-body"><div className="bubble theirs">Hi Maria! We'd love to help with your event.</div><div className="bubble mine">Amazing. Can you include two signature cocktails?</div><div className="bubble theirs">Absolutely — I just updated your proposal.</div></div><div className="composer"><input placeholder="Type a message..."/><button><Send/></button></div></div>
+      <div className="chat"><div className="chat-head"><strong>{active}</strong><span>Usually replies within 1 hour</span></div><div className="chat-body"><div className="bubble theirs">Hi Maria! We'd love to help with your event.</div><div className="bubble mine">Amazing. Can you include two signature cocktails?</div><div className="bubble theirs">Absolutely — I just updated your proposal.</div>
+{sentMessages.map((msg,i)=>
+  <div className="bubble mine" key={i}>{msg}</div>
+)}</div><div className="composer"><input
+  placeholder="Type a message..."
+  value={draft}
+  onChange={(e)=>setDraft(e.target.value)}
+/>
+<button onClick={()=>{
+  if(draft.trim()){
+    setSentMessages([...sentMessages,draft.trim()]);
+    setDraft("");
+  }
+}}>
+  <Send/>
+</button></div></div>
     </div>
   </section>
 }

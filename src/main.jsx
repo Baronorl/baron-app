@@ -375,7 +375,7 @@ function BookingDetail({go}) {
 function ProDashboard({t,go}) {
   const stats=[[t.newLeads,"8"],[t.upcoming,"5"],[t.monthly,"12"],[t.est,"$8,450"]];
   return <section className="page pro-page">
-    <div className="pro-head"><div><span className="eyebrow">BarOn Pro</span><h1>{t.dashboard}</h1><p>Grow your bar business.</p></div><button className="outline-btn">Switch to Customer</button></div>
+    <div className="pro-head"><div><span className="eyebrow">BarOn Pro</span><h1>{t.dashboard}</h1><p>Grow your bar business.</p></div><button className="outline-btn" onClick={()=>{go("home")}}>Switch to Customer</button></div>
     <div className="stats">{stats.map((s,i)=><div className="stat-card" key={i}><span>{s[0]}</span><strong>{s[1]}</strong></div>)}</div>
     <div className="section-head"><div><span className="eyebrow">New opportunities</span><h2>Event Leads</h2></div></div>
     {[1,2,3].map((x,i)=><div className="lead-card" key={x}><div className="lead-icon"><PartyPopper/></div><div className="lead-main"><span className="status">New Lead</span><h3>{["Wedding","Corporate Event","Birthday Party"][i]}</h3><p>Orlando, FL · {["150","80","60"][i]} guests · 5 hours</p><div className="tags"><span>Mobile Bar</span><span>Bartenders</span><span>Mixers</span></div></div><div className="lead-budget"><small>Budget</small><strong>{["$1,000–$1,500","$1,500–$2,500","$500–$1,000"][i]}</strong><button className="gold-btn" onClick={()=>go("lead")}>View Lead</button></div></div>)}
@@ -402,3 +402,5 @@ function SendQuote({go}) {
 }
 
 createRoot(document.getElementById('root')).render(<App/>);
+
+

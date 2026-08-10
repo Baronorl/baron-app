@@ -476,18 +476,31 @@ function BookingDetail({go}) {
       <div className="booking-detail-actions">
         <button className="ghost-btn" onClick={()=>go("messages")}>
           <MessageCircle size={18}/> Message Provider
-        </button>
+ </button>
 
-        <button
-          className="danger-btn"
-          onClick={()=>alert("Cancellation flow will be connected in the next MVP phase.")}
-        >
-          Cancel Booking
-        </button>
+<button
+className="danger-btn"
+            onClick={()=>{
+    const bookings=JSON.parse(localStorage.getItem("baron_bookings") || "[]");
+
+    const updated=bookings.map(b=>
+      b.id===booking.id
+        ? {...b,status:"Cancelled"}
+        : b
+    );
+
+    localStorage.setItem("baron_bookings",JSON.stringify(updated));
+    go("bookings");
+  }}
+>
+  Cancel Booking
+</button>
       </div>
     </section>
   );
-}function LeadDetail({go}) {
+}
+
+function LeadDetail({go}) {
   return <section className="page narrow">
     <button className="text-btn" onClick={()=>go("pro")}>← Back to leads</button>
     <div className="page-title"><span className="eyebrow">New Event Opportunity</span><h1>Wedding in Orlando</h1><p>Maria · October 17, 2026</p></div>

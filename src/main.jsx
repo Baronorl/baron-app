@@ -681,7 +681,30 @@ function SendQuote({go}) {
   if(sent) return <section className="center-state"><div className="success-icon"><Send/></div><h1>Quote sent successfully</h1><p>Maria will be notified and can message you with questions.</p><button className="gold-btn" onClick={()=>go("pro")}>Back to Dashboard</button></section>
   return <section className="page narrow"><div className="page-title"><span className="eyebrow">BarOn Pro</span><h1>Build your proposal</h1></div><div className="form-card"><div className="form-grid"><Input label="Package name" value="Signature Wedding Bar"/><Input label="Price" value="$1,350"/><Input label="Deposit" value="$405"/><Input label="Bartenders" value="2"/><Input label="Hours" value="5"/><Input label="Travel fee" value="$50"/></div><label className="input"><span>Message</span><textarea defaultValue="We’d love to create a memorable cocktail experience for your wedding."/></label><button className="gold-btn full" onClick={()=>setSent(true)}>Send Quote</button></div></section>
 }
+function ProDashboard({t,go}) {
+  return (
+    <section className="page narrow">
+      <div className="page-title">
+        <span className="eyebrow">BarOn Pro</span>
+        <h1>Professional Dashboard</h1>
+        <p>Manage your leads, quotes and bookings.</p>
+      </div>
 
+      <div className="content-card">
+        <h3>Your BarOn Pro account</h3>
+        <p>View new opportunities and manage your business from one place.</p>
+
+        <button
+          className="gold-btn"
+          onClick={()=>go("lead")}
+        >
+          View Leads
+        </button>
+      </div>
+    </section>
+  );
+}
 createRoot(document.getElementById('root')).render(<App/>);
+
 
 

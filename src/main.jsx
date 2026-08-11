@@ -59,6 +59,16 @@ function App(){
   const [page,setPage]=useState("home");
   const [selected,setSelected]=useState(providers[0]);
   const [selectedQuote,setSelectedQuote]=useState(null);
+
+  const [eventData,setEventData]=useState({
+  event:"Wedding",
+  date:"Oct 17, 2026",
+  time:"5:00 PM",
+  location:"Orlando, FL",
+  guests:"150",
+  hours:"5",
+  budget:"$1,000-$1,500"
+});
   const [mobile,setMobile]=useState(false);
   const t=i18n[lang];
   const go=(p)=>{setPage(p); window.scrollTo({top:0,behavior:"smooth"});}
@@ -88,13 +98,22 @@ function App(){
       {page==="home" && <Home t={t} go={go} setSelected={setSelected}/>}
       {page==="find" && <Find t={t} go={go} setSelected={setSelected}/>}
       {page==="profile" && <Provider t={t} p={selected} go={go}/>}
-      {page==="post" && <PostEvent t={t} go={go}/>}
+      {page==="post" && (
+  <PostEvent
+    t={t}
+    go={go}
+    eventData={eventData}
+    setEventData={setEventData}
+  />
+)}
       {page==="quotes" && (
   <Quotes
     t={t}
     go={go}
     setSelectedQuote={setSelectedQuote}
+    eventData={eventData}
   />
+)}
 )}
       {page==="messages" && <Messages t={t}/>}
       {page==="bookings" && <Bookings t={t} go={go}/>}\n      {page==="bookingdetail" && <BookingDetail t={t} go={go}/>}
@@ -102,13 +121,14 @@ function App(){
       {page==="lead" && <LeadDetail t={t} go={go}/>}
       {page==="sendquote" && <SendQuote t={t} go={go}/>}
       {page==="checkout" && (
-  <Checkout
-    t={t}
-    go={go}
-    selectedQuote={selectedQuote}
-  />
-)}
-      {page==="confirmed" && <Confirmed t={t} go={go}/>}
+      <Checkout
+      t={t}
+      go={go}
+      selectedQuote={selectedQuote}
+      eventData={eventData}
+    />  
+  )}   
+    {page==="confirmed" && <Confirmed t={t} go={go}/>}
     </main>
     <footer>
       <Logo compact/>
@@ -228,9 +248,10 @@ function Provider({t,p,go}) {
   </section>
 }
 
-function PostEvent({t,go}) {
+function PostEvent({t,go,eventData,setEventData}) {
   const [step,setStep]=useState(1);
   const [done,setDone]=useState(false);
+  
   if(done) return <section className="center-state"><div className="success-icon"><Check/></div><h1>Your event is live!</h1><p>Matching BarOn Pros can now send you quotes.</p><button className="gold-btn" onClick={()=>go("quotes")}>View Quotes</button></section>
   const titles=["Choose your event","Event details","Build your bar","Set your budget","Review & post"];
   return <section className="page narrow">
@@ -238,10 +259,42 @@ function PostEvent({t,go}) {
     <div className="progress"><span style={{width:`${step*20}%`}}/></div>
     <div className="form-card">
       {step===1 && <ChoiceGrid items={["Wedding","Birthday","Corporate Event","Private Party","Quinceañera","Anniversary"]}/>}
-      {step===2 && <div className="form-grid"><Input label="Date" value="Oct 17, 2026"/><Input label="Start time" value="5:00 PM"/><Input label="Service hours" value="5 hours"/><Input label="Guests" value="150"/><Input label="Location" value="Orlando, FL"/><Input label="Venue" value="Outdoor"/></div>}
+      {step===2 && <div className="form-grid"><Input
+  label="Date"
+  value={eventData.date}
+  onChange={(e)=>setEventData({...eventData,date:e.target.value})}
+/><Input
+  label="Start time"
+  value={eventData.time}
+  onChange={(e)=>setEventData({...eventData,time:e.target.value})}
+/><Input
+  label="Service hours"
+  value={eventData.hours}
+  onChange={(e)=>setEventData({...eventData,hours:e.target.value})}
+/><Input
+  label="Guests"
+  value={eventData.guests}
+  onChange={(e)=>setEventData({...eventData,guests:e.target.value})}
+/><Input
+  label="Location"
+  value={eventData.location}
+  onChange={(e)=>setEventData({...eventData,location:e.target.value})}
+/><Input label="Venue" value="Outdoor"/></div>}
       {step===3 && <ChoiceGrid items={["Mobile Bar","Bartender(s)","Mixers","Ice","Garnishes","Glassware","Signature Cocktails","Mocktails"]}/>}
-      {step===4 && <ChoiceGrid items={["Under $500","$500–$1,000","$1,000–$1,500","$1,500–$2,500","$2,500+"]}/>}
-      {step===5 && <div className="review-card"><h3>Wedding · Orlando</h3><p>Oct 17, 2026 · 150 guests · 5 hours</p><div className="tags"><span>Mobile Bar</span><span>2 Bartenders</span><span>Mixers</span><span>Signature Cocktails</span></div><strong>Budget: $1,000–$1,500</strong></div>}
+      {step===4 && (
+  <div className="choice-grid">
+    {["Under $500","$500-$1,000","$1,000-$1,500","$1,500-$2,500","$2,500+"].map(x=>
+      <button
+        key={x}
+        className={eventData.budget===x ? "selected" : ""}
+        onClick={()=>setEventData({...eventData,budget:x})}
+      >
+        {x}
+      </button>
+    )}
+  </div>
+)}
+      {step===5 && <div className="review-card"><h3>{eventData.event} · {eventData.location}</h3><p>{eventData.date} · {eventData.guests} guests · {eventData.hours} hours</p><div className="tags"><span>Mobile Bar</span><span>2 Bartenders</span><span>Mixers</span><span>Signature Cocktails</span></div><strong>Budget: {eventData.budget}</strong></div>}
       <div className="wizard-actions"><button className="ghost-btn" disabled={step===1} onClick={()=>setStep(step-1)}>Back</button><button className="gold-btn" onClick={()=>step===5?setDone(true):setStep(step+1)}>{step===5?"Post Event":"Continue"}</button></div>
     </div>
   </section>
@@ -251,11 +304,18 @@ function ChoiceGrid({items}) {
   const [selected,setSelected]=useState([items[0]]);
   return <div className="choice-grid">{items.map(x=><button key={x} className={selected.includes(x)?"selected":""} onClick={()=>setSelected(s=>s.includes(x)?s.filter(a=>a!==x):[...s,x])}>{x}{selected.includes(x)&&<Check size={16}/>}</button>)}</div>
 }
-function Input({label,value}) { return <label className="input"><span>{label}</span><input defaultValue={value}/></label> }
+function Input({label,value,onChange}) {
+  return (
+    <label className="input">
+      <span>{label}</span>
+      <input value={value} onChange={onChange} />
+    </label>
+  );
+}
 
-function Quotes({t,go,setSelectedQuote}) {
+function Quotes({t,go,setSelectedQuote,eventData}) {
   return <section className="page">
-    <div className="page-title"><span className="eyebrow">{t.quotes}</span><h1>Maria & David’s Wedding</h1><p>October 17 · Orlando, FL · 150 guests</p></div>
+    <div className="page-title"><span className="eyebrow">{t.quotes}</span><h1>{eventData.event} · {eventData.location}</h1><p>{eventData.date} · {eventData.guests} guests · {eventData.hours} hours</p></div>
     <div className="quote-grid">
       {providers.slice(0,3).map((p,i)=><div className="quote-card" key={p.id}>
         <div className="quote-top"><div className="avatar">{p.emoji}</div><div><h3>{p.name}</h3><div className="rating"><Star size={14} fill="currentColor"/>{p.rating} · <ShieldCheck size={14}/>{t.verified}</div></div></div>
@@ -274,7 +334,7 @@ function Quotes({t,go,setSelectedQuote}) {
   </section>
 }
 
-function Checkout({t,go,selectedQuote}) {
+function Checkout({t,go,selectedQuote,eventData}) {
 const packagePrice = selectedQuote?.price || 1200;
 const providerName = selectedQuote?.provider || "Cocktail Culture Orlando";
 const total = packagePrice + 50 + 100;
@@ -282,7 +342,8 @@ const deposit = total * 0.30;
   return <section className="page narrow">
     <div className="page-title"><span className="eyebrow">Checkout</span><h1>Confirm your BarOn booking</h1></div>
     <div className="checkout-card">
-      <div><h3>{providerName}</h3><p>Signature Bar · Wedding · Oct 17, 2026</p></div>
+      <div><h3>{providerName}</h3><p>Signature Bar · {eventData.event} · {eventData.date}</p>
+</div>
       <div className="line"><span>Package</span><strong>${packagePrice.toLocaleString()}</strong></div>
       <div className="line"><span>Travel</span><strong>$50</strong></div>
       <div className="line"><span>Estimated service fee</span><strong>$100</strong></div>
@@ -292,11 +353,11 @@ const deposit = total * 0.30;
       <button className="gold-btn full" onClick={()=>{
   const booking={
     id:Date.now(),
-    provider: providerName,
-    event:"Maria & David's Wedding",
-    date:"Oct 17, 2026",
-    location:"Orlando, FL",
-    price: `$${total.toLocaleString()}`,
+    provider:providerName,
+event:eventData.event,
+date:eventData.date,
+location:eventData.location,
+price:`$${total.toLocaleString()}`,
     status:"Confirmed"
   };
 

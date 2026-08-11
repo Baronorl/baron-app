@@ -258,7 +258,13 @@ function PostEvent({t,go,eventData,setEventData}) {
     <div className="page-title"><span className="eyebrow">{t.post}</span><h1>{titles[step-1]}</h1><p>Step {step} of 5</p></div>
     <div className="progress"><span style={{width:`${step*20}%`}}/></div>
     <div className="form-card">
-      {step===1 && <ChoiceGrid items={["Wedding","Birthday","Corporate Event","Private Party","Quinceañera","Anniversary"]}/>}
+      {step===1 && (
+  <ChoiceGrid
+    items={["Wedding","Birthday","Corporate Event","Private Party","Quinceañera","Anniversary"]}
+    multiple={false}
+    onSelect={(x)=>setEventData({...eventData,event:x})}
+  />
+)}
       {step===2 && <div className="form-grid"><Input
   label="Date"
   value={eventData.date}
@@ -300,11 +306,44 @@ function PostEvent({t,go,eventData,setEventData}) {
   </section>
 }
 
-function ChoiceGrid({items}) {
-  const [selected,setSelected]=useState([items[0]]);
-  return <div className="choice-grid">{items.map(x=><button key={x} className={selected.includes(x)?"selected":""} onClick={()=>setSelected(s=>s.includes(x)?s.filter(a=>a!==x):[...s,x])}>{x}{selected.includes(x)&&<Check size={16}/>}</button>)}</div>
-}
-function Input({label,value,onChange}) {
+function ChoiceGrid({items,multiple=true,onSelect}) {
+  const [selected,setSelected]=useState(
+    multiple ? [items[0]] : items[0]
+  );
+
+  const choose=(x)=>{
+    if(multiple){
+      setSelected(s=>
+        s.includes(x)
+          ? s.filter(a=>a!==x)
+          : [...s,x]
+      );
+    }else{
+      setSelected(x);
+    }
+
+    if(onSelect) onSelect(x);
+  };
+
+  return (
+    <div className="choice-grid">
+      {items.map(x=>
+        <button
+          key={x}
+          className={
+            multiple
+              ? (selected.includes(x) ? "selected" : "")
+              : (selected===x ? "selected" : "")
+          }
+          onClick={()=>choose(x)}
+        >
+          {x}
+          {(multiple ? selected.includes(x) : selected===x) && <Check size={16}/>}
+        </button>
+      )}
+    </div>
+  );
+}function Input({label,value,onChange}) {
   return (
     <label className="input">
       <span>{label}</span>

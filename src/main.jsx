@@ -85,7 +85,7 @@ function App(){
       </nav>
       <div className="header-actions">
         <button className="lang" onClick={toggle}><Languages size={16}/>{t.lang}</button>
-        <button className="outline-btn">{t.login}</button>
+        <button className="outline-btn" onClick={()=>go("login")}>{t.login}</button>
         <button className="menu-btn" onClick={()=>setMobile(!mobile)}>{mobile?<X/>:<Menu/>}</button>
       </div>
     </header>
@@ -119,6 +119,7 @@ function App(){
       {page==="bookings" && <Bookings t={t} go={go}/>}\n      {page==="bookingdetail" && <BookingDetail t={t} go={go}/>}
       {page==="pro" && <ProDashboard t={t} go={go}/>}
       {page==="lead" && <LeadDetail t={t} go={go}/>}
+      {page==="login" && <Login t={t} go={go}/>}
       {page==="sendquote" && <SendQuote t={t} go={go}/>}
       {page==="checkout" && (
       <Checkout
@@ -699,6 +700,43 @@ function ProDashboard({t,go}) {
           onClick={()=>go("lead")}
         >
           View Leads
+        </button>
+      </div>
+    </section>
+  );
+  }
+function Login({t,go}) {
+  return (
+    <section className="page narrow">
+      <div className="page-title">
+        <span className="eyebrow">BarOn</span>
+        <h1>Log in</h1>
+        <p>Access your BarOn account.</p>
+      </div>
+
+      <div className="form-card">
+        <label className="input">
+          <span>Email</span>
+          <input type="email" placeholder="you@example.com" />
+        </label>
+
+        <label className="input">
+          <span>Password</span>
+          <input type="password" placeholder="Enter your password" />
+        </label>
+
+        <button
+          className="gold-btn full"
+          onClick={()=>go("pro")}
+        >
+          Log in
+        </button>
+
+        <button
+          className="ghost-btn"
+          onClick={()=>go("home")}
+        >
+          Back
         </button>
       </div>
     </section>

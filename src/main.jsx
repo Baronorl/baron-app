@@ -81,7 +81,15 @@ function App(){
         <button onClick={()=>go("post")}>{t.post}</button>
         <button onClick={()=>go("bookings")}>{t.bookings}</button>
         <button onClick={()=>go("messages")}>{t.messages}</button>
-        <button className="pro-link" onClick={()=>go("pro")}>{t.pro}</button>
+        <button
+  className="pro-link"
+  onClick={()=>{
+    const isLoggedIn = localStorage.getItem("baron_session") === "true";
+    go(isLoggedIn ? "pro" : "login");
+  }}
+>
+  {t.pro}
+</button>
       </nav>
       <div className="header-actions">
         <button className="lang" onClick={toggle}><Languages size={16}/>{t.lang}</button>
@@ -678,11 +686,77 @@ function LeadDetail({go}) {
 }
 
 function SendQuote({go}) {
-  const [sent,setSent]=useState(false);
+const [sent,setSent]=useState(false);
+const [packageName,setPackageName]=useState("Signature Wedding Bar");
+const [price,setPrice]=useState("$1,350");
+const [deposit,setDeposit]=useState("$405");
+const [bartenders,setBartenders]=useState("2");
+const [hours,setHours]=useState("5");
+const [travelFee,setTravelFee]=useState("$50");
+const [message,setMessage]=useState("We'd love to create a memorable cocktail experience for your wedding.");
+const handleSendQuote = () => {
+  const quote = {
+    packageName,
+    price,
+    deposit,
+    bartenders,
+    hours,
+    travelFee,
+    message,
+    status: "sent"
+  };
+  localStorage.setItem("baron_last_quote", JSON.stringify(quote));
+  setSent(true);
+};
   if(sent) return <section className="center-state"><div className="success-icon"><Send/></div><h1>Quote sent successfully</h1><p>Maria will be notified and can message you with questions.</p><button className="gold-btn" onClick={()=>go("pro")}>Back to Dashboard</button></section>
-  return <section className="page narrow"><div className="page-title"><span className="eyebrow">BarOn Pro</span><h1>Build your proposal</h1></div><div className="form-card"><div className="form-grid"><Input label="Package name" value="Signature Wedding Bar"/><Input label="Price" value="$1,350"/><Input label="Deposit" value="$405"/><Input label="Bartenders" value="2"/><Input label="Hours" value="5"/><Input label="Travel fee" value="$50"/></div><label className="input"><span>Message</span><textarea defaultValue="We’d love to create a memorable cocktail experience for your wedding."/></label><button className="gold-btn full" onClick={()=>setSent(true)}>Send Quote</button></div></section>
+  return <section className="page narrow"><div className="page-title"><span className="eyebrow">BarOn Pro</span><h1>Build your proposal</h1></div><div className="form-card"><div className="form-grid"><Input
+  label="Package name"
+  value={packageName}
+  onChange={(e)=>setPackageName(e.target.value)}
+/><Input
+  label="Price"
+  value={price}
+  onChange={(e)=>setPrice(e.target.value)}
+/><Input
+  label="Deposit"
+  value={deposit}
+  onChange={(e)=>setDeposit(e.target.value)}
+/><Input
+  label="Bartenders"
+  value={bartenders}
+  onChange={(e)=>setBartenders(e.target.value)}
+/><Input
+  label="Hours"
+  value={hours}
+  onChange={(e)=>setHours(e.target.value)}
+/><Input
+  label="Travel fee"
+  value={travelFee}
+  onChange={(e)=>setTravelFee(e.target.value)}
+/></div><label className="input"><span>Message</span>
+<textarea
+  value={message}
+  onChange={(e)=>setMessage(e.target.value)}
+/>
+</label>
+
+<button 
+className="gold-btn full"
+onClick={handleSendQuote}
+>
+Send Quote
+
+</button>
+</div>
+</section>
 }
 function ProDashboard({t,go}) {
+const savedQuote = JSON.parse(localStorage.getItem("baron_last_quote"));
+const handleLogout = () => {
+  localStorage.removeItem("baron_session");
+  go("login"); 
+};
+
   return (
     <section className="page narrow">
       <div className="page-title">
@@ -694,6 +768,15 @@ function ProDashboard({t,go}) {
       <div className="content-card">
         <h3>Your BarOn Pro account</h3>
         <p>View new opportunities and manage your business from one place.</p>
+{savedQuote && (
+  <div className="quote-summary">
+    <h4>Last quote sent</h4>
+    <p><strong>Package:</strong> {savedQuote.packageName}</p>
+    <p><strong>Price:</strong> {savedQuote.price}</p>
+    <p><strong>Deposit:</strong> {savedQuote.deposit}</p>
+    <p><strong>Status:</strong> {savedQuote.status}</p>
+  </div>
+)}
 
         <button
           className="gold-btn"
@@ -701,6 +784,12 @@ function ProDashboard({t,go}) {
         >
           View Leads
         </button>
+<button
+  className="ghost-btn"
+  onClick={handleLogout}
+>
+  Log out
+</button>
       </div>
     </section>
   );

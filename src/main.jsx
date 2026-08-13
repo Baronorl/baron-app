@@ -49,7 +49,7 @@ const providers = [
 ];
 
 function Logo({compact=false}) {
-  return <button className={"logo "+(compact?"compact":"")} onClick={()=>location.hash=""}>
+  return <button className={"logo "+(compact?"compact":"")} onClick={()=>window.location.reload()}>
     <span>Bar</span><span className="logo-on">On</span>
   </button>
 }
@@ -113,7 +113,6 @@ function App(){
     setSelectedQuote={setSelectedQuote}
     eventData={eventData}
   />
-)}
 )}
       {page==="messages" && <Messages t={t}/>}
       {page==="bookings" && <Bookings t={t} go={go}/>}\n      {page==="bookingdetail" && <BookingDetail t={t} go={go}/>}

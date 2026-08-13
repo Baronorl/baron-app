@@ -705,7 +705,20 @@ const handleSendQuote = () => {
     message,
     status: "sent"
   };
-  localStorage.setItem("baron_last_quote", JSON.stringify(quote));
+  const existingQuotes =
+  JSON.parse(localStorage.getItem("baron_quotes")) || [];
+
+const updatedQuotes = [...existingQuotes, quote];
+
+localStorage.setItem(
+  "baron_quotes",
+  JSON.stringify(updatedQuotes)
+);
+
+localStorage.setItem(
+  "baron_last_quote",
+  JSON.stringify(quote)
+);
   setSent(true);
 };
   if(sent) return <section className="center-state"><div className="success-icon"><Send/></div><h1>Quote sent successfully</h1><p>Maria will be notified and can message you with questions.</p><button className="gold-btn" onClick={()=>go("pro")}>Back to Dashboard</button></section>
@@ -752,6 +765,8 @@ Send Quote
 }
 function ProDashboard({t,go}) {
 const savedQuote = JSON.parse(localStorage.getItem("baron_last_quote"));
+const savedQuotes =
+  JSON.parse(localStorage.getItem("baron_quotes")) || [];
 const handleLogout = () => {
   localStorage.removeItem("baron_session");
   go("login"); 
@@ -777,8 +792,28 @@ const handleLogout = () => {
     <p><strong>Status:</strong> {savedQuote.status}</p>
   </div>
 )}
+{savedQuotes.length > 0 && (
+  <div className="quote-history">
+    <h3>Quote history</h3>
 
-        <button
+    {savedQuotes.map((quote, index) => (
+      <div
+        key={index}
+        className="content-card"
+        style={{ marginTop: "12px" }}
+      >
+        <h4>{quote.packageName}</h4>
+        <p><strong>Price:</strong> {quote.price}</p>
+        <p><strong>Deposit:</strong> {quote.deposit}</p>
+        <p><strong>Bartenders:</strong> {quote.bartenders}</p>
+        <p><strong>Hours:</strong> {quote.hours}</p>
+        <p><strong>Travel fee:</strong> {quote.travelFee}</p>
+        <p><strong>Status:</strong> {quote.status}</p>
+      </div>
+    ))}
+  </div>
+)}        
+<button
           className="gold-btn"
           onClick={()=>go("lead")}
         >

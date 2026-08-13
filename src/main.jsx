@@ -119,6 +119,7 @@ function App(){
       {page==="pro" && <ProDashboard t={t} go={go}/>}
       {page==="lead" && <LeadDetail t={t} go={go}/>}
       {page==="login" && <Login t={t} go={go}/>}
+      {page==="signup" && <Signup go={go}/>}
       {page==="sendquote" && <SendQuote t={t} go={go}/>}
       {page==="checkout" && (
       <Checkout
@@ -703,8 +704,37 @@ function ProDashboard({t,go}) {
       </div>
     </section>
   );
-  }
+}
 function Login({t,go}) {
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  const [error,setError] = useState("");
+
+  const handleLogin = () => {
+    if (!email.trim() || !password.trim()) {
+      setError("Please enter your email and password.");
+      return;
+    }
+
+    const savedAccount = JSON.parse(localStorage.getItem("baron_account"));
+
+if (!savedAccount) {
+  setError("No account found. Please create an account first.");
+  return;
+}
+
+if (
+  email.trim() !== savedAccount.email ||
+  password !== savedAccount.password
+) {
+  setError("Incorrect email or password.");
+  return;
+}
+
+setError("");
+go("pro");
+  };
+
   return (
     <section className="page narrow">
       <div className="page-title">
@@ -716,20 +746,38 @@ function Login({t,go}) {
       <div className="form-card">
         <label className="input">
           <span>Email</span>
-          <input type="email" placeholder="you@example.com" />
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+          />
         </label>
 
         <label className="input">
           <span>Password</span>
-          <input type="password" placeholder="Enter your password" />
+          <input
+            type="password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
+          />
         </label>
+
+        {error && <p className="notes">{error}</p>}
 
         <button
           className="gold-btn full"
-          onClick={()=>go("pro")}
+          onClick={handleLogin}
         >
           Log in
         </button>
+<button
+  className="ghost-btn"
+  onClick={()=>go("signup")}
+>
+  Create account
+</button>
 
         <button
           className="ghost-btn"
@@ -741,7 +789,90 @@ function Login({t,go}) {
     </section>
   );
 }
-createRoot(document.getElementById('root')).render(<App/>);
+function Signup({go}) {
+  const [name,setName] = useState("");
+  const [email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  const [error,setError] = useState("");
+
+  const handleSignup = () => {
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError("Please complete all fields.");
+      return;
+    }
+
+    const account = {
+  name: name.trim(),
+  email: email.trim(),
+  password: password
+};
+
+localStorage.setItem("baron_account", JSON.stringify(account));
+
+setError("");
+go("login");
+  };
+
+  return (
+    <section className="page narrow">
+      <div className="page-title">
+        <span className="eyebrow">BarOn Pro</span>
+        <h1>Create account</h1>
+        <p>Create your professional BarOn account.</p>
+      </div>
+
+      <div className="form-card">
+        <label className="input">
+          <span>Business name</span>
+          <input
+            type="text"
+            placeholder="Your business name"
+            value={name}
+            onChange={(e)=>setName(e.target.value)}
+          />
+        </label>
+
+        <label className="input">
+          <span>Email</span>
+          <input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+          />
+        </label>
+
+        <label className="input">
+          <span>Password</span>
+          <input
+            type="password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(e)=>setPassword(e.target.value)}
+          />
+        </label>
+
+        {error && <p className="notes">{error}</p>}
+
+        <button
+          className="gold-btn full"
+          onClick={handleSignup}
+        >
+          Create account
+        </button>
+
+        <button
+          className="ghost-btn"
+          onClick={()=>go("login")}
+        >
+          Back to login
+        </button>
+      </div>
+    </section>
+  );
+}
+
+  createRoot(document.getElementById('root')).render(<App/>);
 
 
 

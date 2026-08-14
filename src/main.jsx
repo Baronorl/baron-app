@@ -318,20 +318,50 @@ function ProviderCard({p,t,onOpen}) {
 }
 
 function Find({t,go,setSelected,eventData}) {
-  return <section className="page">
-    <div className="page-title"><span className="eyebrow">BarOn Marketplace</span><h1>{t.allPros}</h1><p><p>
-  {eventData?.location || "Orlando, FL"} ·{" "}
-  {eventData?.date || "2026-10-17"} ·{" "}
-  {eventData?.guests || "120"} guests
-</p></p></div>
+const filteredProviders = providers.filter((p) => {
+  const requestedService = (eventData?.need || "").toLowerCase();
+  const requestedLocation = (eventData?.location || "").toLowerCase();
+
+  const providerType = (p.type || "").toLowerCase();
+  const providerCity = (p.city || "").toLowerCase();
+
+  const serviceMatches =
+    requestedService === "mobile bar"
+      ? providerType.includes("mobile bar")
+      : requestedService === "bartender"
+      ? providerType.includes("bartender")
+      : true;
+
+  const locationMatches =
+    !requestedLocation ||
+    providerCity.includes(requestedLocation) ||
+    requestedLocation.includes(providerCity);
+
+  return serviceMatches && locationMatches;
+});
+return (
+<section className="page">
+    <div className="page-title">
+      <span className="eyebrow">BarOn Marketplace</span>
+
+      <h1>Bar Pros available for your event</h1>
+
+      <p>
+        {eventData?.location || "Orlando, FL"} ·{" "}
+        {eventData?.date || "2026-10-17"} ·{" "}
+        {eventData?.guests || "120"} guests
+      </p>
+    </div>
+
     <div className="filters">
       {[t.location,t.eventType,t.service,t.budget,t.rating].map((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>)}
       <button className="verified-filter"><ShieldCheck size={16}/> {t.verified}</button>
     </div>
     <div className="provider-grid">
-      {providers.map(p=><ProviderCard key={p.id} p={p} t={t} onOpen={()=>{setSelected(p);go("profile")}}/>)}
+      {filteredProviders.map(p=><ProviderCard key={p.id} p={p} t={t} onOpen={()=>{setSelected(p);go("profile")}}/>)}
     </div>
   </section>
+);
 }
 
 function Provider({t,p,go}) {

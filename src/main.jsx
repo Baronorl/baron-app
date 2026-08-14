@@ -103,8 +103,22 @@ function App(){
       )}
     </div>}
     <main>
-      {page==="home" && <Home t={t} go={go} setSelected={setSelected}/>}
-      {page==="find" && <Find t={t} go={go} setSelected={setSelected}/>}
+ {page==="home" && (
+  <Home
+    t={t}
+    go={go}
+    setSelected={setSelected}
+    setEventData={setEventData}
+  />
+)}
+      {page==="find" && (
+  <Find
+    t={t}
+    go={go}
+    setSelected={setSelected}
+    eventData={eventData}
+  />
+)}
       {page==="profile" && <Provider t={t} p={selected} go={go}/>}
       {page==="post" && (
   <PostEvent
@@ -147,17 +161,100 @@ function App(){
   </div>
 }
 
-function SearchCard({t,go}) {
-  return <div className="search-card">
-    <div className="field"><Martini/><div><small>{t.need}</small><strong>Bartender / Mobile Bar</strong></div></div>
-    <div className="field"><MapPin/><div><small>{t.where}</small><strong>Orlando, FL</strong></div></div>
-    <div className="field"><CalendarDays/><div><small>{t.date}</small><strong>Oct 17, 2026</strong></div></div>
-    <div className="field"><Users/><div><small>{t.guests}</small><strong>120</strong></div></div>
-    <button className="gold-btn large" onClick={()=>go("find")}><Search size={18}/>{t.cta}</button>
-  </div>
-}
+function SearchCard({t,go,setEventData}) {
+  const [need, setNeed] = useState("Bartender");
+  const [where, setWhere] = useState("Orlando, FL");
+  const [date, setDate] = useState("2026-10-17");
+  const [guests, setGuests] = useState("120");
 
-function Home({t,go,setSelected}) {
+  return (
+    <div className="search-card">
+
+      <div className="field">
+        <Martini />
+        <div>
+          <small>{t.need}</small>
+          <select
+  value={need}
+  onChange={(e) => setNeed(e.target.value)}
+>
+  <option value="Bartender">Bartender</option>
+  <option value="Mobile Bar">Mobile Bar</option>
+</select>
+        </div>
+      </div>
+
+      <div className="field">
+        <MapPin />
+        <div>
+          <small>{t.where}</small>
+          <input
+  type="text"
+  list="us-cities"
+  value={where}
+  onChange={(e) => setWhere(e.target.value)}
+/>
+
+<datalist id="us-cities">
+  <option value="Jacksonville, FL" />
+  <option value="Orlando, FL" />
+  <option value="Miami, FL" />
+  <option value="Tampa, FL" />
+  <option value="Atlanta, GA" />
+  <option value="New York, NY" />
+  <option value="Los Angeles, CA" />
+  <option value="Chicago, IL" />
+</datalist>
+        </div>
+      </div>
+
+      <div className="field">
+        <CalendarDays />
+        <div>
+          <small>{t.date}</small>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="field">
+        <Users />
+        <div>
+          <small>{t.guests}</small>
+          <input
+            type="number"
+            min="1"
+            value={guests}
+            onChange={(e) => setGuests(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <button
+        className="gold-btn large"
+        onClick={() => {
+  setEventData(prev => ({
+    ...prev,
+    need,
+    location: where,
+    date,
+    guests
+  }));
+
+  go("find");
+}}
+      >
+        <Search size={18} />
+        {t.cta}
+      </button>
+
+    </div>
+  );
+}
+function Home({t,go,setSelected,setEventData}) {
   return <>
     <section className="hero">
       <div className="hero-copy">
@@ -177,7 +274,11 @@ function Home({t,go,setSelected}) {
         </div>
       </div>
     </section>
-    <section className="search-wrap"><SearchCard t={t} go={go}/></section>
+    <section className="search-wrap"><SearchCard
+  t={t}
+  go={go}
+  setEventData={setEventData}
+/></section>
     <section>
       <div className="section-head"><div><span className="eyebrow">Central Florida</span><h2>{t.popular}</h2></div><button className="text-btn" onClick={()=>go("find")}>{t.find} →</button></div>
       <div className="provider-grid">
@@ -216,9 +317,13 @@ function ProviderCard({p,t,onOpen}) {
   </article>
 }
 
-function Find({t,go,setSelected}) {
+function Find({t,go,setSelected,eventData}) {
   return <section className="page">
-    <div className="page-title"><span className="eyebrow">BarOn Marketplace</span><h1>{t.allPros}</h1><p>Orlando, FL · Oct 17 · 120 guests</p></div>
+    <div className="page-title"><span className="eyebrow">BarOn Marketplace</span><h1>{t.allPros}</h1><p><p>
+  {eventData?.location || "Orlando, FL"} ·{" "}
+  {eventData?.date || "2026-10-17"} ·{" "}
+  {eventData?.guests || "120"} guests
+</p></p></div>
     <div className="filters">
       {[t.location,t.eventType,t.service,t.budget,t.rating].map((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>)}
       <button className="verified-filter"><ShieldCheck size={16}/> {t.verified}</button>

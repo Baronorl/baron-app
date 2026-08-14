@@ -7,6 +7,7 @@ import {
   X, Languages, LayoutDashboard, WalletCards, BadgeCheck
 } from 'lucide-react';
 import './styles.css';
+import baronLogo from "./assets/baron-logo.png";
 
 const i18n = {
   en: {
@@ -268,7 +269,18 @@ function Home({t,go,setSelected,setEventData}) {
       </div>
       <div className="hero-visual">
         <div className="glass-card">
-          <div className="cocktail">🍸</div>
+          <div className="cocktail">
+  <img
+    src={baronLogo}
+    alt="BarOn logo"
+    style={{
+      width: "300px",
+      height: "300px",
+      objectFit: "contain",
+      borderRadius: "24px"
+    }}
+  />
+</div>
           <strong>Turn your event ON.</strong>
           <span>Premium bartenders · Mobile bars · Full cocktail experiences</span>
         </div>

@@ -41,9 +41,9 @@ const i18n = {
 };
 
 const providers = [
-  {id:1,name:"Cocktail Culture Orlando",rating:4.9,reviews:127,city:"Orlando, FL",distance:"50 mi",price:750,languages:"English · Español",type:"Mobile Bar · Weddings",emoji:"🍸"},
-  {id:2,name:"Pour Decisions Mobile Bar",rating:4.8,reviews:98,city:"Kissimmee, FL",distance:"35 mi",price:650,languages:"English · Español",type:"Mobile Bar · Private Events",emoji:"🥂"},
-  {id:3,name:"On The Rocks Events",rating:4.9,reviews:156,city:"Winter Park, FL",distance:"60 mi",price:800,languages:"English",type:"Full Bar · Corporate",emoji:"🍹"},
+  {id:1,name:"Cocktail Culture Orlando",verified: true,rating:4.9,reviews:127,city:"Orlando, FL",distance:"50 mi",price:750,languages:"English · Español",type:"Mobile Bar · Weddings",emoji:"🍸"},
+  {id:2,name:"Pour Decisions Mobile Bar",verified: true,rating:4.8,reviews:98,city:"Kissimmee, FL",distance:"35 mi",price:650,languages:"English · Español",type:"Mobile Bar · Private Events",emoji:"🥂"},
+  {id:3,name:"On The Rocks Events",verified: false,rating:4.9,reviews:156,city:"Winter Park, FL",distance:"60 mi",price:800,languages:"English",type:"Full Bar · Corporate",emoji:"🍹"},
   {id:4,name:"Brindis Mobile Mixology",rating:4.9,reviews:84,city:"Davenport, FL",distance:"45 mi",price:700,languages:"Español · English",type:"Mixology · Quinceañeras",emoji:"✨"},
   {id:5,name:"Golden Hour Bartending",rating:4.7,reviews:69,city:"Lake Buena Vista, FL",distance:"30 mi",price:550,languages:"English",type:"Bartender · Weddings",emoji:"🍾"},
   {id:6,name:"The Social Pour",rating:4.8,reviews:113,city:"Orlando, FL",distance:"40 mi",price:720,languages:"English · Español",type:"Cocktail Catering",emoji:"🍸"}
@@ -277,7 +277,7 @@ function Home({t,go,setSelected,setEventData}) {
       width: "300px",
       height: "300px",
       objectFit: "contain",
-      borderRadius: "24px"
+      borderRadius: "100pz"
     }}
   />
 </div>
@@ -330,6 +330,7 @@ function ProviderCard({p,t,onOpen}) {
 }
 
 function Find({t,go,setSelected,eventData}) {
+const [verifiedOnly, setVerifiedOnly] = useState(false);
 const filteredProviders = providers.filter((p) => {
   const requestedService = (eventData?.need || "").toLowerCase();
   const requestedLocation = (eventData?.location || "").toLowerCase();
@@ -349,7 +350,9 @@ const filteredProviders = providers.filter((p) => {
     providerCity.includes(requestedLocation) ||
     requestedLocation.includes(providerCity);
 
-  return serviceMatches && locationMatches;
+  const verifiedMatches = !verifiedOnly || p.verified;
+
+return serviceMatches && locationMatches && verifiedMatches;
 });
 return (
 <section className="page">
@@ -367,7 +370,13 @@ return (
 
     <div className="filters">
       {[t.location,t.eventType,t.service,t.budget,t.rating].map((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>)}
-      <button className="verified-filter"><ShieldCheck size={16}/> {t.verified}</button>
+      <button
+  className="verified-filter"
+  onClick={() => setVerifiedOnly(!verifiedOnly)}
+>
+  <ShieldCheck size={16}/>
+  {verifiedOnly ? "✓ Verified" : t.verified}
+</button>
     </div>
     <div className="provider-grid">
       {filteredProviders.map(p=><ProviderCard key={p.id} p={p} t={t} onOpen={()=>{setSelected(p);go("profile")}}/>)}

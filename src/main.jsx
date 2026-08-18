@@ -331,6 +331,7 @@ function ProviderCard({p,t,onOpen}) {
 
 function Find({t,go,setSelected,eventData}) {
 const [verifiedOnly, setVerifiedOnly] = useState(false);
+const [budgetMax, setBudgetMax] = useState(null);
 const filteredProviders = providers.filter((p) => {
   const requestedService = (eventData?.need || "").toLowerCase();
   const requestedLocation = (eventData?.location || "").toLowerCase();
@@ -351,8 +352,9 @@ const filteredProviders = providers.filter((p) => {
     requestedLocation.includes(providerCity);
 
   const verifiedMatches = !verifiedOnly || p.verified;
+const budgetMatches = budgetMax === null || p.price <= budgetMax;
 
-return serviceMatches && locationMatches && verifiedMatches;
+return serviceMatches && locationMatches && verifiedMatches && budgetMatches;
 });
 return (
 <section className="page">
@@ -369,12 +371,26 @@ return (
     </div>
 
     <div className="filters">
-      {[t.location,t.eventType,t.service,t.budget,t.rating].map((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>)}
+    {[t.location,t.eventType,t.service,t.rating].map((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>
+     )}
       <button
+  onClick={() =>
+    setBudgetMax(
+      budgetMax === null ? 700 :
+      budgetMax === 700 ? 800 :
+      null
+    )
+  }
+>
+  {budgetMax === null ? t.budget : `$${budgetMax} max`}
+  <ChevronRight size={15} />
+</button>
+
+<button
   className="verified-filter"
   onClick={() => setVerifiedOnly(!verifiedOnly)}
 >
-  <ShieldCheck size={16}/>
+  <ShieldCheck size={16} />
   {verifiedOnly ? "✓ Verified" : t.verified}
 </button>
     </div>

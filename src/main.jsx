@@ -332,6 +332,8 @@ function ProviderCard({p,t,onOpen}) {
 function Find({t,go,setSelected,eventData}) {
 const [verifiedOnly, setVerifiedOnly] = useState(false);
 const [budgetMax, setBudgetMax] = useState(null);
+const [ratingMin, setRatingMin] = useState(null);
+
 const filteredProviders = providers.filter((p) => {
   const requestedService = (eventData?.need || "").toLowerCase();
   const requestedLocation = (eventData?.location || "").toLowerCase();
@@ -353,8 +355,9 @@ const filteredProviders = providers.filter((p) => {
 
   const verifiedMatches = !verifiedOnly || p.verified;
 const budgetMatches = budgetMax === null || p.price <= budgetMax;
+const ratingMatches = ratingMin === null || p.rating >= ratingMin;
 
-return serviceMatches && locationMatches && verifiedMatches && budgetMatches;
+return serviceMatches && locationMatches && verifiedMatches && budgetMatches && ratingMatches;
 });
 return (
 <section className="page">
@@ -371,8 +374,21 @@ return (
     </div>
 
     <div className="filters">
-    {[t.location,t.eventType,t.service,t.rating].map((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>
+    {[t.location,t.eventType,t.service].map  ((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>
      )}
+<button
+  onClick={() =>
+    setRatingMin(
+      ratingMin === null ? 4.5 :
+      ratingMin === 4.5 ? 4.8 :
+      ratingMin === 4.8 ? 4.9 :
+      null
+    )
+  }
+>
+  {ratingMin === null ? t.rating : `${ratingMin}+ ★`}
+  <ChevronRight size={15} />
+</button>
       <button
   onClick={() =>
     setBudgetMax(

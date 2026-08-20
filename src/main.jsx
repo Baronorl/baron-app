@@ -333,13 +333,19 @@ function Find({t,go,setSelected,eventData}) {
 const [verifiedOnly, setVerifiedOnly] = useState(false);
 const [budgetMax, setBudgetMax] = useState(null);
 const [ratingMin, setRatingMin] = useState(null);
-
+const [serviceFilter, setServiceFilter] = useState(
+  (eventData?.need || "").toLowerCase()
+);
+const [eventTypeFilter, setEventTypeFilter] = useState("");
 const filteredProviders = providers.filter((p) => {
-  const requestedService = (eventData?.need || "").toLowerCase();
+  const requestedService = serviceFilter;
   const requestedLocation = (eventData?.location || "").toLowerCase();
 
   const providerType = (p.type || "").toLowerCase();
   const providerCity = (p.city || "").toLowerCase();
+  const eventTypeMatches = true;
+  !eventTypeFilter ||
+  providerType.includes(eventTypeFilter);
 
   const serviceMatches =
     requestedService === "mobile bar"
@@ -353,12 +359,24 @@ const filteredProviders = providers.filter((p) => {
     providerCity.includes(requestedLocation) ||
     requestedLocation.includes(providerCity);
 
-  const verifiedMatches = !verifiedOnly || p.verified;
-const budgetMatches = budgetMax === null || p.price <= budgetMax;
-const ratingMatches = ratingMin === null || p.rating >= ratingMin;
+const verifiedMatches = !verifiedOnly || p.verified;
 
-return serviceMatches && locationMatches && verifiedMatches && budgetMatches && ratingMatches;
+const budgetMatches = 
+budgetMax === null || p.price <= budgetMax;
+
+const ratingMatches = 
+ratingMin === null || p.rating >= ratingMin;
+
+return (
+       serviceMatches &&
+       locationMatches &&
+       verifiedMatches &&
+       budgetMatches &&
+       ratingMatches &&
+       eventTypeMatches
+);
 });
+
 return (
 <section className="page">
     <div className="page-title">
@@ -374,8 +392,35 @@ return (
     </div>
 
     <div className="filters">
-    {[t.location,t.eventType,t.service].map  ((x,i)=><button key={i}>{x}<ChevronRight size={15}/></button>
-     )}
+  {[t.location].map((x,i)=>
+   <button key={i}>
+    {x}<ChevronRight size={15}/>
+   </button>
+ )}
+<button
+  onClick={() =>
+    setEventTypeFilter(
+      eventTypeFilter === ""
+        ? "weddings"
+        : eventTypeFilter === "weddings"
+        ? "private events"
+        : eventTypeFilter === "private events"
+        ? "corporate"
+        : ""
+    )
+  }
+>
+  {eventTypeFilter === ""
+    ? t.eventType
+    : eventTypeFilter === "weddings"
+    ? "Weddings"
+    : eventTypeFilter === "private events"
+    ? "Private Events"
+    : "Corporate"}
+
+  <ChevronRight size={15} />
+</button>
+
 <button
   onClick={() =>
     setRatingMin(

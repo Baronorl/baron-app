@@ -337,9 +337,12 @@ const [serviceFilter, setServiceFilter] = useState(
   (eventData?.need || "").toLowerCase()
 );
 const [eventTypeFilter, setEventTypeFilter] = useState("");
+const [locationFilter, setLocationFilter] = useState(
+  (eventData?.location || "").toLowerCase()
+);
 const filteredProviders = providers.filter((p) => {
   const requestedService = serviceFilter;
-  const requestedLocation = (eventData?.location || "").toLowerCase();
+  const requestedLocation = locationFilter;
 
   const providerType = (p.type || "").toLowerCase();
   const providerCity = (p.city || "").toLowerCase();
@@ -392,11 +395,37 @@ return (
     </div>
 
     <div className="filters">
-  {[t.location].map((x,i)=>
-   <button key={i}>
-    {x}<ChevronRight size={15}/>
-   </button>
- )}
+  <button
+  onClick={() =>
+    setLocationFilter(
+      locationFilter === ""
+        ? "orlando, fl"
+        : locationFilter === "orlando, fl"
+        ? "kissimmee, fl"
+        : locationFilter === "kissimmee, fl"
+        ? "winter park, fl"
+        : locationFilter === "winter park, fl"
+        ? "davenport, fl"
+        : locationFilter === "davenport, fl"
+        ? "lake buena vista, fl"
+        : ""
+    )
+  }
+>
+  {locationFilter === ""
+    ? t.location
+    : locationFilter === "orlando, fl"
+    ? "Orlando"
+    : locationFilter === "kissimmee, fl"
+    ? "Kissimmee"
+    : locationFilter === "winter park, fl"
+    ? "Winter Park"
+    : locationFilter === "davenport, fl"
+    ? "Davenport"
+    : "Lake Buena Vista"}
+
+  <ChevronRight size={15} />
+</button>
 <button
   onClick={() =>
     setEventTypeFilter(
